@@ -13257,8 +13257,7 @@
   "venue": "Suncorp Stadium, Milton",
   "round": "Round 8",
   "position": "Wing",
-  "ssj": true,
-  "photo_url": "photos/1105.png"
+  "ssj": true
  },
  {
   "player_no": 1106,
@@ -14566,8 +14565,7 @@
   "venue": "Suncorp Stadium, Milton",
   "round": "Round 1",
   "position": "Hooker",
-  "ssj": true,
-  "photo_url": "photos/1214.jpg"
+  "ssj": true
  },
  {
   "player_no": 1215,
@@ -14663,7 +14661,6 @@
   "venue": "Commbank Stadium, Parramatta",
   "round": "Round 17",
   "position": "Interchange",
-  "ssj": true,
-  "photo_url": "photos/1222.jpg"
+  "ssj": true
  }
 ]

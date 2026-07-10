@@ -125,7 +125,6 @@
     cursor: pointer;
     content-visibility: auto;
     contain-intrinsic-size: 150px 210px;
-    container-type: inline-size;
   }
   .card-inner {
     position: relative;
@@ -136,8 +135,11 @@
   }
   .card:hover, .card.flipped { content-visibility: visible; }
   .card.flipped { z-index: 5; }
-  .card.flipped .card-inner { transform: rotateY(180deg); }
-  .card.flipped .face { box-shadow: 0 8px 22px rgba(20,32,26,.3); }
+  .card.flipped .card-inner { transform: rotateY(180deg) scale(1.32); }
+  @media (max-width: 600px) {
+    .card.flipped .card-inner { transform: rotateY(180deg) scale(1.18); }
+  }
+  .card.flipped .face { box-shadow: 0 12px 34px rgba(20,32,26,.38); }
   .card:not(.flipped):hover .card-inner { transform: translateY(-4px) rotateY(0); }
   .face {
     position: absolute;
@@ -177,67 +179,47 @@
     object-position: top center;
   }
   .front .jersey-no {
-    font-size: clamp(26px, 28cqi, 60px);
+    font-size: clamp(38px, 5.2vw, 64px);
     font-weight: 900;
     letter-spacing: -.02em;
     color: #fff;
     text-shadow: 0 3px 0 rgba(0,0,0,.28);
     font-variant-numeric: tabular-nums;
   }
-  .front .toprow {
+  .front .photo .hash {
     position: absolute;
-    top: 6px;
-    left: 8px;
-    right: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 6px;
-    z-index: 2;
-  }
-  .front .hash {
-    font-size: clamp(7.5px, 6cqi, 11px);
+    top: 7px;
+    left: 10px;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: .12em;
+    letter-spacing: .18em;
     color: rgba(255,255,255,.55);
     text-transform: uppercase;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
   }
   .front .no-badge {
+    position: absolute;
+    top: 6px;
+    left: 6px;
     background: var(--myrtle);
     border: 1.5px solid rgba(255,255,255,.5);
     color: #fff;
     font-weight: 800;
-    font-size: clamp(10px, 7cqi, 13px);
+    font-size: 13px;
     border-radius: 999px;
     padding: 3px 9px;
     font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
   }
   .ssj-chip {
+    position: absolute;
+    top: 6px;
+    right: 6px;
     background: var(--cardinal);
     color: #fff;
-    font-size: clamp(7.5px, 5.5cqi, 9px);
+    font-size: 9px;
     font-weight: 800;
     letter-spacing: .08em;
     border-radius: 4px;
     padding: 3px 5px;
-    flex-shrink: 0;
-    margin-left: auto;
-  }
-  /* the ten deliberately blank numbers (2023 list review) */
-  .card.blank .jersey-no { opacity: .4; }
-  .card.blank .nameplate { background: #6e7a72; }
-  .card.blank .nameplate .name { color: rgba(255,255,255,.9); font-style: italic; text-transform: none; font-weight: 600; }
-  .back .blank-note {
-    flex: 1;
-    font-size: 11px;
-    line-height: 1.55;
-    color: #5c6a61;
-    padding-top: 6px;
   }
   .front .nameplate {
     background: var(--cardinal);
@@ -534,9 +516,6 @@
     }
   }
 
-  // the ten numbers deliberately left blank in the 2023 review of the official list
-  const isBlank = p => !p.name || !p.name.trim();
-
   function currentList() {
     let list = players.slice();
     const q = searchEl.value.trim().toLowerCase();
@@ -547,8 +526,6 @@
       Math.floor(new Date(p.debut_date).getFullYear() / 10) * 10 === +dec);
     const [key, dir] = sortEl.value.split('-');
     const mul = dir === 'asc' ? 1 : -1;
-    // blank numbers only belong in the numbered order — hide them in date/name sorts
-    if (key !== 'no') list = list.filter(p => !isBlank(p));
     list.sort((a, b) => {
       if (key === 'no') return (a.player_no - b.player_no) * mul;
       if (key === 'date') return ((a.debut_date || '') < (b.debut_date || '') ? -1 : 1) * mul;
@@ -570,55 +547,44 @@
     const frag = document.createDocumentFragment();
     for (const p of list) {
       const card = document.createElement('div');
-      const blank = isBlank(p);
-      card.className = 'card' + (blank ? ' blank' : '');
+      card.className = 'card';
       card.tabIndex = 0;
       card.setAttribute('role', 'button');
-      card.setAttribute('aria-label', blank
-        ? 'Number ' + p.player_no + ', left blank'
-        : p.name + ', Rabbitoh number ' + p.player_no);
+      card.setAttribute('aria-label', p.name + ', Rabbitoh number ' + p.player_no);
       const year = p.debut_date ? new Date(p.debut_date).getFullYear() : '';
-      const topRow =
-        '<div class="toprow">' +
-          (p.photo_url
-            ? '<span class="no-badge">#' + p.player_no + '</span>'
-            : '<span class="hash">Rabbitoh No.</span>') +
-          (p.ssj ? '<span class="ssj-chip">SSJ</span>' : '') +
-        '</div>';
-      const photoInner = topRow + (p.photo_url
-        ? '<img loading="lazy" src="' + esc(p.photo_url) + '" alt="' + esc(p.name) + '">'
-        : '<span class="jersey-no">' + p.player_no + '</span>');
-      const backBody = blank
-        ? '<div class="blank-note">This number was left deliberately blank when duplicated ' +
-          'players were removed from the original 2002 list in the 2023 review.</div>'
-        : '<dl>' +
-            '<dt>Souths debut</dt><dd>' + esc(p.debut_date_display || '—') + '</dd>' +
-            '<dt>Opponent</dt><dd>' + esc(p.opponent || '—') + '</dd>' +
-            '<dt>Venue</dt><dd>' + esc(p.venue || '—') + '</dd>' +
-            '<dt>Round · Position</dt><dd>' + esc(p.round || '—') + ' · ' + esc(p.position || '—') + '</dd>' +
-          '</dl>' +
-          '<div class="badges">' +
-            (p.fg_debut ? '<span class="badge fg">FG debut at Souths</span>' : '') +
-            (p.ssj ? '<span class="badge ssj">Souths Junior</span>' : '') +
-          '</div>' +
-          (p.bio
-            ? '<button class="bio-btn" data-no="' + p.player_no + '">Full biography</button>'
-            : '');
+      const photoInner = p.photo_url
+        ? '<img loading="lazy" src="' + esc(p.photo_url) + '" alt="' + esc(p.name) + '">' +
+          '<span class="no-badge">#' + p.player_no + '</span>'
+        : '<span class="hash">Rabbitoh No.</span><span class="jersey-no">' + p.player_no + '</span>';
       card.innerHTML =
         '<div class="card-inner">' +
           '<div class="face front">' +
-            '<div class="photo">' + photoInner + '</div>' +
+            '<div class="photo">' + photoInner +
+              (p.ssj ? '<span class="ssj-chip">SSJ</span>' : '') +
+            '</div>' +
             '<div class="nameplate">' +
-              '<div class="name">' + (blank ? 'Left blank' : esc(p.name)) + '</div>' +
-              '<div class="meta">' + (blank ? '2023 list review' : esc(p.position || '') + (year ? ' · ' + year : '')) + '</div>' +
+              '<div class="name">' + esc(p.name) + '</div>' +
+              '<div class="meta">' + esc(p.position || '') + (year ? ' · ' + year : '') + '</div>' +
             '</div>' +
           '</div>' +
           '<div class="face back">' +
             '<div class="bk-head">' +
               '<div class="bk-no">RABBITOH #' + p.player_no + '</div>' +
-              '<div class="bk-name">' + (blank ? 'Left blank' : esc(p.name)) + '</div>' +
+              '<div class="bk-name">' + esc(p.name) + '</div>' +
             '</div>' +
-            backBody +
+            '<dl>' +
+              '<dt>Souths debut</dt><dd>' + esc(p.debut_date_display || '—') + '</dd>' +
+              '<dt>Opponent</dt><dd>' + esc(p.opponent || '—') + '</dd>' +
+              '<dt>Venue</dt><dd>' + esc(p.venue || '—') + '</dd>' +
+              '<dt>Round · Position</dt><dd>' + esc(p.round || '—') + ' · ' + esc(p.position || '—') + '</dd>' +
+            '</dl>' +
+            '<div class="badges">' +
+              (p.fg_debut ? '<span class="badge fg">FG debut at Souths</span>' : '') +
+              (p.ssj ? '<span class="badge ssj">Souths Junior</span>' : '') +
+            '</div>' +
+            (p.bio
+              ? '<button class="bio-btn" data-no="' + p.player_no + '">Full biography</button>'
+              : '') +
           '</div>' +
         '</div>';
       card.addEventListener('click', e => {
