@@ -49,6 +49,15 @@
     color: #d7e8dd;
   }
   header .sub strong { color: #fff; }
+  header .subnote {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: #9dbfab;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
 
   /* ---------- controls ---------- */
   .controls {
@@ -96,6 +105,45 @@
     background: var(--myrtle);
     border-color: var(--myrtle);
     color: #fff;
+  }
+  .filter-wrap { position: relative; }
+  .filter-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    border: 1.5px solid #cfc9ba;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(20,32,26,.18);
+    padding: 12px 16px;
+    min-width: 250px;
+    z-index: 60;
+    text-align: left;
+  }
+  .filter-panel.open { display: block; }
+  .filter-panel label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    padding: 6px 2px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .filter-panel input { width: 16px; height: 16px; accent-color: var(--myrtle-3); }
+  .filter-sep {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: #8a8676;
+    margin: 8px 0 2px;
+    border-top: 1px solid #eee9dd;
+    padding-top: 8px;
   }
   .count {
     font-size: 13px;
@@ -241,13 +289,18 @@
   }
   .front .nameplate {
     background: var(--cardinal);
-    padding: 8px 8px 7px;
+    flex: 0 0 32%;
+    padding: 4px 8px;
     text-align: center;
     border-top: 2px solid rgba(255,255,255,.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
   }
   .front .nameplate .name {
     font-weight: 800;
-    font-size: 13.5px;
+    font-size: clamp(10px, 8.5cqi, 13.5px);
     line-height: 1.15;
     text-transform: uppercase;
     letter-spacing: .02em;
@@ -256,16 +309,17 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     min-height: 2.3em;
-    display: -webkit-box;
-    align-items: center;
   }
   .front .nameplate .meta {
     margin-top: 3px;
-    font-size: 10px;
+    font-size: clamp(8px, 5.5cqi, 10px);
     font-weight: 600;
-    letter-spacing: .06em;
+    letter-spacing: .05em;
     text-transform: uppercase;
     color: rgba(255,255,255,.82);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* back */
@@ -325,6 +379,10 @@
   }
   .badge.fg { background: var(--myrtle); color: #fff; }
   .badge.ssj { background: var(--cardinal); color: #fff; }
+  .badge.aus { background: #9c7c1c; color: #fff; }
+  .badge.int { background: #28425c; color: #fff; }
+  .badge.nsw { background: #3f78a8; color: #fff; }
+  .badge.qld { background: #6b1f2e; color: #fff; }
   .bio-btn {
     font: inherit;
     font-size: 11px;
@@ -347,79 +405,87 @@
     cursor: default;
   }
 
-  /* ---------- bio modal ---------- */
-  .modal-backdrop {
+  /* ---------- full player page ---------- */
+  .player-page {
     position: fixed;
     inset: 0;
-    background: rgba(7,51,31,.72);
-    display: none;
-    align-items: center;
-    justify-content: center;
+    background: var(--paper);
     z-index: 100;
-    padding: 20px;
-  }
-  .modal-backdrop.open { display: flex; }
-  .modal {
-    background: #fff;
-    border-radius: 14px;
-    max-width: 640px;
-    width: 100%;
-    max-height: 86vh;
     overflow-y: auto;
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    display: none;
   }
-  .modal .m-head {
+  .player-page.open { display: block; }
+  body.pp-locked { overflow: hidden; }
+  .pp-hero {
     background: linear-gradient(160deg, var(--myrtle), var(--myrtle-2));
     color: #fff;
-    padding: 22px 24px;
-    display: flex;
-    gap: 18px;
-    align-items: center;
-    border-bottom: 4px solid var(--cardinal);
-    position: relative;
+    border-bottom: 5px solid var(--cardinal);
+    padding: 18px 24px 30px;
   }
-  .modal .m-photo {
-    width: 84px;
-    height: 84px;
-    border-radius: 12px;
+  .pp-top { max-width: 860px; margin: 0 auto 18px; }
+  .pp-back {
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    background: rgba(255,255,255,.12);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,.35);
+    border-radius: 999px;
+    padding: 8px 16px;
+    cursor: pointer;
+  }
+  .pp-back:hover { background: rgba(255,255,255,.22); }
+  .pp-hero-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    gap: 22px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .pp-photo {
+    width: 112px;
+    height: 112px;
+    border-radius: 14px;
     background: var(--myrtle-3);
-    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 900;
     overflow: hidden;
     border: 2px solid rgba(255,255,255,.3);
+    flex-shrink: 0;
   }
-  .modal .m-photo img { width: 100%; height: 100%; object-fit: cover; }
-  .modal .m-no { font-size: 12px; font-weight: 800; letter-spacing: .14em; color: #ffb3bf; }
-  .modal .m-name { font-size: 24px; font-weight: 800; text-transform: uppercase; line-height: 1.1; }
-  .modal .m-debut { margin-top: 4px; font-size: 13px; color: #cfe3d7; }
-  .modal .m-close {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    background: rgba(255,255,255,.15);
-    border: none;
-    color: #fff;
-    width: 32px;
-    height: 32px;
-    border-radius: 999px;
-    font-size: 17px;
-    cursor: pointer;
-    line-height: 1;
+  .pp-photo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+  .pp-no { font-size: 13px; font-weight: 800; letter-spacing: .14em; color: #ffb3bf; }
+  .pp-name { font-size: clamp(26px, 4vw, 38px); font-weight: 800; text-transform: uppercase; line-height: 1.05; }
+  .pp-debut { margin-top: 6px; font-size: 14px; color: #cfe3d7; }
+  .pp-badges { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .pp-badges .badge { font-size: 11px; padding: 5px 9px; }
+  .pp-body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 24px 70px;
+    font-size: 15.5px;
+    line-height: 1.7;
   }
-  .modal .m-body { padding: 22px 24px 28px; font-size: 15px; line-height: 1.65; }
-  .modal .m-body h3 {
-    font-size: 12px;
+  .pp-body h3 {
+    font-size: 13px;
     text-transform: uppercase;
-    letter-spacing: .16em;
+    letter-spacing: .14em;
     color: var(--cardinal);
-    margin-bottom: 10px;
+    margin: 26px 0 10px;
+    border-bottom: 1px solid #ddd6c8;
+    padding-bottom: 5px;
   }
-  .modal .m-body p { margin-bottom: 12px; }
-  .modal .m-empty { color: #8a8676; font-style: italic; }
+  .pp-body h3:first-child { margin-top: 0; }
+  .pp-body p { margin-bottom: 13px; }
+  .pp-body .tscroll { overflow-x: auto; margin: 14px 0; }
+  .pp-body table { border-collapse: collapse; font-size: 12.5px; background: #fff; }
+  .pp-body th, .pp-body td { border: 1px solid #ddd6c8; padding: 5px 9px; text-align: center; white-space: nowrap; }
+  .pp-body th { background: var(--myrtle); color: #fff; font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; }
+  .pp-empty { color: #8a8676; font-style: italic; }
 
   /* ---------- footer ---------- */
   footer {
@@ -452,6 +518,8 @@
   <div class="kicker">South Sydney Rabbitohs</div>
   <h1>First Grade Player Register</h1>
   <div class="sub">Every player to wear the cardinal and myrtle since <strong>1908</strong> — <strong id="totalCount">…</strong> and counting</div>
+  <div class="subnote">The register runs to <span id="numbersCount">…</span> numbers. Ten of them are deliberately blank:
+    duplicated players were removed from the original 2002 list in the 2023 review, and their numbers were retired rather than reused.</div>
 </header>
 
 <div class="controls">
@@ -467,7 +535,18 @@
   <select id="decade" aria-label="Filter by debut decade">
     <option value="">All decades</option>
   </select>
-  <button class="toggle" id="ssjToggle" aria-pressed="false">South Sydney Juniors only</button>
+  <div class="filter-wrap">
+    <button class="toggle" id="filterBtn" aria-expanded="false" aria-pressed="false">Filters</button>
+    <div class="filter-panel" id="filterPanel">
+      <label><input type="checkbox" data-f="ssj"> South Sydney Junior</label>
+      <label><input type="checkbox" data-f="fg_debut"> First grade debut at Souths</label>
+      <div class="filter-sep">Rep honours at Souths</div>
+      <label><input type="checkbox" data-f="rep_australia"> Australian Rep</label>
+      <label><input type="checkbox" data-f="rep_international"> Other International Rep</label>
+      <label><input type="checkbox" data-f="rep_nsw"> NSW Rep</label>
+      <label><input type="checkbox" data-f="rep_qld"> QLD Rep</label>
+    </div>
+  </div>
   <span class="count" id="count"></span>
 </div>
 
@@ -479,22 +558,20 @@
   Original list compiled by rugby league historian David Middleton in 2002 and updated by the club's historians.
 </footer>
 
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mName">
-    <div class="m-head">
-      <div class="m-photo" id="mPhoto"></div>
+<div class="player-page" id="playerPage" role="dialog" aria-modal="true" aria-labelledby="ppName">
+  <div class="pp-hero">
+    <div class="pp-top"><button class="pp-back" id="ppBack">← Back to the Register</button></div>
+    <div class="pp-hero-inner">
+      <div class="pp-photo" id="ppPhoto"></div>
       <div>
-        <div class="m-no" id="mNo"></div>
-        <div class="m-name" id="mName"></div>
-        <div class="m-debut" id="mDebut"></div>
+        <div class="pp-no" id="ppNo"></div>
+        <div class="pp-name" id="ppName"></div>
+        <div class="pp-debut" id="ppDebut"></div>
+        <div class="pp-badges" id="ppBadges"></div>
       </div>
-      <button class="m-close" id="mClose" aria-label="Close">✕</button>
-    </div>
-    <div class="m-body">
-      <h3>Biography</h3>
-      <div id="mBio"></div>
     </div>
   </div>
+  <div class="pp-body" id="ppBody"></div>
 </div>
 
 <script>
@@ -505,7 +582,9 @@
   const searchEl = document.getElementById('search');
   const sortEl = document.getElementById('sort');
   const decadeEl = document.getElementById('decade');
-  const ssjEl = document.getElementById('ssjToggle');
+  const filterBtn = document.getElementById('filterBtn');
+  const filterPanel = document.getElementById('filterPanel');
+  const filterBoxes = [...filterPanel.querySelectorAll('input')];
   const countEl = document.getElementById('count');
 
   async function load() {
@@ -517,9 +596,12 @@
       grid.innerHTML = '<div class="loading">Could not load the player list: ' + e.message + '</div>';
       return;
     }
-    document.getElementById('totalCount').textContent = players.length.toLocaleString() + ' players';
+    const realPlayers = players.filter(p => !isBlank(p)).length;
+    document.getElementById('totalCount').textContent = realPlayers.toLocaleString() + ' players';
+    document.getElementById('numbersCount').textContent = players.length.toLocaleString();
     buildDecades();
     render();
+    syncHash();   // support arriving directly on a shared #player-N link
   }
 
   function buildDecades() {
@@ -541,10 +623,13 @@
     let list = players.slice();
     const q = searchEl.value.trim().toLowerCase();
     if (q) list = list.filter(p => p.name.toLowerCase().includes(q));
-    if (ssjEl.getAttribute('aria-pressed') === 'true') list = list.filter(p => p.ssj);
     const dec = decadeEl.value;
     if (dec) list = list.filter(p => p.debut_date &&
       Math.floor(new Date(p.debut_date).getFullYear() / 10) * 10 === +dec);
+    // combined filters: every ticked box must be true for the player (AND logic)
+    for (const box of filterBoxes) {
+      if (box.checked) list = list.filter(p => p[box.dataset.f]);
+    }
     const [key, dir] = sortEl.value.split('-');
     const mul = dir === 'asc' ? 1 : -1;
     // blank numbers only belong in the numbered order — hide them in date/name sorts
@@ -564,9 +649,19 @@
       ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   }
 
+  function allBadges(p) {
+    return (p.fg_debut ? '<span class="badge fg">FG debut at Souths</span>' : '') +
+      (p.ssj ? '<span class="badge ssj">Souths Junior</span>' : '') +
+      (p.rep_australia ? '<span class="badge aus">Australia</span>' : '') +
+      (p.rep_international ? '<span class="badge int">International</span>' : '') +
+      (p.rep_nsw ? '<span class="badge nsw">NSW</span>' : '') +
+      (p.rep_qld ? '<span class="badge qld">QLD</span>' : '');
+  }
+
   function render() {
     const list = currentList();
-    countEl.textContent = list.length.toLocaleString() + ' player' + (list.length === 1 ? '' : 's');
+    const realCount = list.filter(p => !isBlank(p)).length;
+    countEl.textContent = realCount.toLocaleString() + ' player' + (realCount === 1 ? '' : 's');
     const frag = document.createDocumentFragment();
     for (const p of list) {
       const card = document.createElement('div');
@@ -597,10 +692,7 @@
             '<dt>Venue</dt><dd>' + esc(p.venue || '—') + '</dd>' +
             '<dt>Round · Position</dt><dd>' + esc(p.round || '—') + ' · ' + esc(p.position || '—') + '</dd>' +
           '</dl>' +
-          '<div class="badges">' +
-            (p.fg_debut ? '<span class="badge fg">FG debut at Souths</span>' : '') +
-            (p.ssj ? '<span class="badge ssj">Souths Junior</span>' : '') +
-          '</div>' +
+          '<div class="badges">' + allBadges(p) + '</div>' +
           (p.bio
             ? '<button class="bio-btn" data-no="' + p.player_no + '">Full biography</button>'
             : '');
@@ -634,39 +726,115 @@
     grid.appendChild(frag);
   }
 
-  /* bio modal */
-  const backdrop = document.getElementById('modalBackdrop');
+  /* ---------- full player page (shareable via #player-<number>) ---------- */
+  const pageEl = document.getElementById('playerPage');
+
+  // renders the historians' bio format: **bold**, ALL-CAPS section headings, | tables |, blank-line paragraphs
+  function mdToHtml(md) {
+    let html = '', para = [], table = [];
+    const inline = s => esc(s)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\\([*_\[\]])/g, '$1');
+    const flushP = () => { if (para.length) { html += '<p>' + para.map(inline).join('<br>') + '</p>'; para = []; } };
+    const flushT = () => {
+      if (table.length) {
+        html += '<div class="tscroll"><table>' + table.map((r, i) =>
+          '<tr>' + r.map(c => '<' + (i === 0 ? 'th' : 'td') + '>' + inline(c) + '</' + (i === 0 ? 'th' : 'td') + '>').join('') + '</tr>'
+        ).join('') + '</table></div>';
+        table = [];
+      }
+    };
+    for (const raw of md.split('\n')) {
+      const line = raw.trim();
+      if (!line) { flushP(); flushT(); continue; }
+      if (line.startsWith('|')) {
+        flushP();
+        if (/^\|[\s\-|:]+\|$/.test(line)) continue;   // markdown separator row
+        table.push(line.replace(/^\||\|$/g, '').split('|').map(c => c.trim()));
+        continue;
+      }
+      flushT();
+      const h = line.match(/^#{1,3}\s+(.*)/);
+      if (h) { flushP(); html += '<h3>' + inline(h[1].replace(/\*\*/g, '')) + '</h3>'; continue; }
+      // an all-caps bold line is a section heading in the historians' format
+      if (/^\*\*[^*]+\*\*\.?$/.test(line) && line === line.toUpperCase() && line.length < 70) {
+        flushP();
+        html += '<h3>' + esc(line.replace(/\*/g, '').replace(/\.$/, '')) + '</h3>';
+        continue;
+      }
+      para.push(line);
+    }
+    flushP(); flushT();
+    return html;
+  }
+
+  function openPlayer(p, push) {
+    document.getElementById('ppNo').textContent = 'RABBITOH #' + p.player_no;
+    document.getElementById('ppName').textContent = p.name;
+    document.getElementById('ppDebut').textContent =
+      'Debut: ' + (p.debut_date_display || '—') + (p.opponent ? ' v ' + p.opponent : '') +
+      (p.venue ? ' · ' + p.venue : '') + (p.position ? ' · ' + p.position : '');
+    document.getElementById('ppBadges').innerHTML = allBadges(p);
+    document.getElementById('ppPhoto').innerHTML = p.photo_url
+      ? '<img src="' + esc(p.photo_url) + '" alt="' + esc(p.name) + '">'
+      : '#' + p.player_no;
+    document.getElementById('ppBody').innerHTML = p.bio
+      ? mdToHtml(p.bio)
+      : '<p class="pp-empty">Biography not yet available.</p>';
+    pageEl.classList.add('open');
+    document.body.classList.add('pp-locked');
+    pageEl.scrollTop = 0;
+    if (push !== false && location.hash !== '#player-' + p.player_no) location.hash = 'player-' + p.player_no;
+  }
+  function closePlayer(clearHash) {
+    pageEl.classList.remove('open');
+    document.body.classList.remove('pp-locked');
+    if (clearHash !== false && location.hash) history.pushState('', '', location.pathname + location.search);
+  }
+  function syncHash() {
+    const m = location.hash.match(/^#player-(\d+)$/);
+    if (m) {
+      const p = players.find(x => x.player_no === +m[1]);
+      if (p) { openPlayer(p, false); return; }
+    }
+    closePlayer(false);
+  }
+  window.addEventListener('hashchange', syncHash);
+
   grid.addEventListener('click', e => {
-    const btn = e.target.closest('.bio-btn:not([disabled])');
+    const btn = e.target.closest('.bio-btn');
     if (!btn) return;
     e.stopPropagation();
     const p = players.find(x => x.player_no === +btn.dataset.no);
-    if (!p) return;
-    document.getElementById('mNo').textContent = 'RABBITOH #' + p.player_no;
-    document.getElementById('mName').textContent = p.name;
-    document.getElementById('mDebut').textContent =
-      'Debut: ' + (p.debut_date_display || '—') + (p.opponent ? ' v ' + p.opponent : '') +
-      (p.venue ? ' · ' + p.venue : '');
-    const ph = document.getElementById('mPhoto');
-    ph.innerHTML = p.photo_url
-      ? '<img src="' + esc(p.photo_url) + '" alt="' + esc(p.name) + '">'
-      : '#' + p.player_no;
-    document.getElementById('mBio').innerHTML = p.bio
-      ? p.bio.split(/\n\s*\n/).map(par => '<p>' + esc(par).replace(/\n/g, '<br>') + '</p>').join('')
-      : '<p class="m-empty">Biography not yet available.</p>';
-    backdrop.classList.add('open');
+    if (p) openPlayer(p);
   });
-  document.getElementById('mClose').addEventListener('click', () => backdrop.classList.remove('open'));
-  backdrop.addEventListener('click', e => { if (e.target === backdrop) backdrop.classList.remove('open'); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') backdrop.classList.remove('open'); });
+  document.getElementById('ppBack').addEventListener('click', () => closePlayer());
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && pageEl.classList.contains('open')) closePlayer();
+  });
 
   searchEl.addEventListener('input', render);
   sortEl.addEventListener('change', render);
   decadeEl.addEventListener('change', render);
-  ssjEl.addEventListener('click', () => {
-    ssjEl.setAttribute('aria-pressed', ssjEl.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-    render();
+
+  filterBtn.addEventListener('click', () => {
+    const open = filterPanel.classList.toggle('open');
+    filterBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.filter-wrap')) {
+      filterPanel.classList.remove('open');
+      filterBtn.setAttribute('aria-expanded', 'false');
+    }
+  });
+  filterBoxes.forEach(box => box.addEventListener('change', () => {
+    const active = filterBoxes.filter(b => b.checked);
+    filterBtn.textContent = active.length ? 'Filters · ' + active.length : 'Filters';
+    filterBtn.setAttribute('aria-pressed', active.length ? 'true' : 'false');
+    // rep-honours summaries read alphabetically (historian's request)
+    if (box.checked && box.dataset.f.startsWith('rep_')) sortEl.value = 'name-asc';
+    render();
+  }));
 
   load();
 })();

@@ -260,11 +260,6 @@
         </div>
         <div class="checkrow"><input type="checkbox" id="f_fg_debut"><label style="margin:0; text-transform:none; font-size:14px;">First grade debut made at Souths (*)</label></div>
         <div class="checkrow"><input type="checkbox" id="f_ssj"><label style="margin:0; text-transform:none; font-size:14px;">South Sydney Junior</label></div>
-        <div class="full"><label style="margin-top:16px;">Representative honours earned while at Souths</label></div>
-        <div class="checkrow" style="margin-top:4px;"><input type="checkbox" id="f_rep_australia"><label style="margin:0; text-transform:none; font-size:14px;">Australian Rep at Souths</label></div>
-        <div class="checkrow" style="margin-top:4px;"><input type="checkbox" id="f_rep_international"><label style="margin:0; text-transform:none; font-size:14px;">Other International Rep at Souths (GB, NZ, France, PNG etc.)</label></div>
-        <div class="checkrow" style="margin-top:4px;"><input type="checkbox" id="f_rep_nsw"><label style="margin:0; text-transform:none; font-size:14px;">NSW Rep at Souths</label></div>
-        <div class="checkrow" style="margin-top:4px;"><input type="checkbox" id="f_rep_qld"><label style="margin:0; text-transform:none; font-size:14px;">QLD Rep at Souths</label></div>
         <div class="full">
           <label>Photo</label>
           <div class="photo-row">
@@ -536,10 +531,6 @@
     F('f_position').value = p ? (p.position || '') : '';
     F('f_fg_debut').checked = p ? !!p.fg_debut : true;
     F('f_ssj').checked = p ? !!p.ssj : false;
-    F('f_rep_australia').checked = p ? !!p.rep_australia : false;
-    F('f_rep_international').checked = p ? !!p.rep_international : false;
-    F('f_rep_nsw').checked = p ? !!p.rep_nsw : false;
-    F('f_rep_qld').checked = p ? !!p.rep_qld : false;
     F('f_photo_url').value = p ? (p.photo_url || '') : '';
     F('f_photo_file').value = '';
     F('f_bio').value = p ? (p.bio || '') : '';
@@ -599,10 +590,6 @@
         round: F('f_round').value.trim() || null,
         position: F('f_position').value.trim() || null,
         ssj: F('f_ssj').checked,
-        rep_australia: F('f_rep_australia').checked,
-        rep_international: F('f_rep_international').checked,
-        rep_nsw: F('f_rep_nsw').checked,
-        rep_qld: F('f_rep_qld').checked,
         photo_url,
         bio: F('f_bio').value.trim() || null,
         confluence_url: F('f_confluence_url').value.trim() || null
